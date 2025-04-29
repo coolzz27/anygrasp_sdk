@@ -9,27 +9,14 @@ from types import SimpleNamespace
 from gsnet import AnyGrasp
 from graspnetAPI import GraspGroup
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--checkpoint_path', required=True,
-#                     help='Model checkpoint path')
-# parser.add_argument('--max_gripper_width', type=float,
-#                     default=0.1, help='Maximum gripper width (<=0.1m)')
-# parser.add_argument('--gripper_height', type=float,
-#                     default=0.03, help='Gripper height')
-# parser.add_argument('--top_down_grasp', action='store_true',
-#                     help='Output top-down grasps.')
-# parser.add_argument('--debug', action='store_true', help='Enable debug mode')
-# cfgs = parser.parse_args()
-# cfgs.max_gripper_width = max(0, min(0.1, cfgs.max_gripper_width))
-
 
 def get_grasp(data_dir):
     cfgs = SimpleNamespace(
         checkpoint_path="log/checkpoint_detection.tar",
         max_gripper_width=0.1,
-        gripper_height=0.03,
+        gripper_height=0.1,
         top_down_grasp=True,
-        debug=False
+        debug=True
     )
     cfgs.max_gripper_width = max(0, min(0.1, cfgs.max_gripper_width))
 
@@ -41,8 +28,10 @@ def get_grasp(data_dir):
         data_dir, 'color.png')).convert('RGB'), dtype=np.float32) / 255.0
     depths = np.array(Image.open(os.path.join(data_dir, 'depth.png')))
     # get camera intrinsics
-    fx, fy = 957.135, 957.625
-    cx, cy = 641.665, 361.891
+    # fx, fy = 957.135, 957.625
+    # cx, cy = 641.665, 361.891
+    fx, fy = 1854, 1864
+    cx, cy = 1121, 723
     scale = 1000.0
     # set workspace to filter output grasps
     xmin, xmax = -0.19, 0.2
@@ -83,7 +72,7 @@ def get_grasp(data_dir):
         grippers = gg.to_open3d_geometry_list()
         for gripper in grippers:
             gripper.transform(trans_mat)
-        o3d.visualization.draw_geometries([*grippers, cloud])
+        # o3d.visualization.draw_geometries([*grippers, cloud])
         o3d.visualization.draw_geometries([grippers[0], cloud])
 
     return gg_pick[0]
