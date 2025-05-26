@@ -46,6 +46,7 @@ def svo_export():
 
     # Specify SVO path parameter
     init_params = sl.InitParameters()
+    init_params.depth_mode = sl.DEPTH_MODE.QUALITY
     init_params.set_from_svo_file(svo_input_path)
     init_params.svo_real_time_mode = False  # Don't convert in realtime
     # Use milliliter units (for depth measurements)

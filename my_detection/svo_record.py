@@ -22,8 +22,9 @@ def svo_record():
     output_svo_file = "./temp/video.svo2"
 
     init = sl.InitParameters()
-    init.depth_mode = sl.DEPTH_MODE.NONE  # Set configuration parameters for the ZED
-    init.camera_resolution = sl.RESOLUTION.HD1080
+    # Set configuration parameters for the ZED
+    init.depth_mode = sl.DEPTH_MODE.QUALITY
+    init.camera_resolution = sl.RESOLUTION.HD2K
 
     status = cam.open(init)
     if status != sl.ERROR_CODE.SUCCESS:
