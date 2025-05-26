@@ -33,11 +33,11 @@ def call_arm_move(translation, rotation):
 
 
 R_cam2base = np.array([
-    [-0.25811838, 0.81660416, -0.51626791],
-    [0.96590179, 0.22930709, -0.12021642],
-    [0.02021467, -0.52969416, -0.84794779]
+    [-0.00656869,  0.77954296, -0.62631432],
+    [0.99936014, -0.01690407, -0.03152081],
+    [-0.03515909, -0.62612061, -0.77893313]
 ])
-t_cam2base = np.array([[0.6639729, -0.19698481, 0.4085248]])
+t_cam2base = np.array([[0.76953153, -0.36666019, 0.57201938]])
 
 H_cam2base = np.eye(4)
 H_cam2base[:3, :3] = R_cam2base
@@ -64,9 +64,17 @@ gripper_t_base = gripper_H_base[:3, 3]
 rotation = rotation_matrix_to_euler(gripper_R_base)
 print("translation: ", gripper_t_base)
 print("rotation: ", rotation)
-gripper_t_base[2] += 0.25
-rotation = np.array([180, 0, 180]).flatten()
-# arm_move(gripper_t_base, rotation)
+gripper_t_base[2] += 0.15
+if gripper_t_base[2] < 0.2:
+    gripper_t_base[2] = 0.23
+    print("[Warning] height is dangerous")
+
+gripper_t_base[0] -= 0.02
+gripper_t_base[1] += 0.03
+
+rotation[0] = 180
+rotation[1] = 0
+# rotation = np.array([180, 0, 180]).flatten()
 
 try:
     call_arm_move(gripper_t_base, rotation)

@@ -6,8 +6,11 @@ import open3d as o3d
 from PIL import Image
 from types import SimpleNamespace
 
+from rot_convert import rotation_matrix_to_euler
+
 from gsnet import AnyGrasp
 from graspnetAPI import GraspGroup
+
 
 
 def get_grasp(data_dir):
@@ -18,7 +21,6 @@ def get_grasp(data_dir):
         top_down_grasp=True,
         debug=True
     )
-    cfgs.max_gripper_width = max(0, min(0.1, cfgs.max_gripper_width))
 
     anygrasp = AnyGrasp(cfgs)
     anygrasp.load_net()
@@ -30,11 +32,11 @@ def get_grasp(data_dir):
     # get camera intrinsics
     # fx, fy = 957.135, 957.625
     # cx, cy = 641.665, 361.891
-    fx, fy = 1854, 1864
-    cx, cy = 1121, 723
+    fx, fy = 1914.27, 1915.25
+    cx, cy = 1110.33, 627.782
     scale = 1000.0
     # set workspace to filter output grasps
-    xmin, xmax = -0.19, 0.2
+    xmin, xmax = -0.2, 0.2
     ymin, ymax = -0.2, 0.15
     zmin, zmax = 0.0, 1.0
     lims = [xmin, xmax, ymin, ymax, zmin, zmax]
@@ -61,7 +63,8 @@ def get_grasp(data_dir):
 
     gg = gg.nms().sort_by_score()
     gg_pick = gg[0:20]
-    print(gg_pick.scores)
+    rot_angles = rotation_matrix_to_euler(gg_pick[0].rotation_matrix)
+    print("grasp info:", rot_angles, gg_pick[0].translation)
     print('grasp score:', gg_pick[0].score)
 
     # visualization
